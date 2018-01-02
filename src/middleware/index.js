@@ -1,0 +1,1 @@
+export { handleNotFound } from './handleNotFound';
