@@ -7,12 +7,12 @@ export default function () {
   var router = express.Router();
 
   //insert router here
-  router.get('/getTotalRevenue',
+  router.get('/total',
     getTotalRevenue,
     returnRevenue
   );
 
-  router.get('/getTopCategoryRevenue',
+  router.get('/category/top',
     getTopCategoryRevenue,
     returnRevenue
   );
