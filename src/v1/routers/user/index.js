@@ -46,6 +46,11 @@ export default function () {
     returnUser
   );
 
+  router.get('/getUniqueTransactions',
+    getUniqueTransactions,
+    returnUser
+  );
+
   async function findUniqueUser (req, res, next) {
     try {
       req.item = await user.findUniqueUsers();
@@ -140,12 +145,26 @@ export default function () {
     }
   }
 
-  async function getRecentActivity(req, res, next) {
+  async function getRecentActivity (req, res, next) {
     try {
       req.item = await user.getRecentActivity();
       if (!req.item) {
         return next(
-          new errors.NotFound('Top Hoular not found')
+          new errors.NotFound('Recent Activities Not Found')
+        );
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function getUniqueTransactions (req, res, next) {
+    try {
+      req.item = await user.getUniqueTransactions ();
+      if (!req.item) {
+        return next(
+          new errors.NotFound('Unique Transactions Not Found')
         );
       }
       next();
@@ -155,8 +174,6 @@ export default function () {
   }
 
   function returnUser (req, res) {
-    // console.log({result: res});
-    // console.log(res);
     res.json(req.item);
   }
 
