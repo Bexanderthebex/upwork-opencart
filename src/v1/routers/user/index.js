@@ -51,15 +51,20 @@ export default function () {
     returnUser
   );
 
+  router.put('/customer/approve/:id',
+    approveCustomer,
+    returnUser
+  );
+
+  router.delete('/customer/:id',
+    deleteCustomer,
+    returnUser
+  );
+
   router.get('/customer',
     getCustomers,
     returnUser
   );
-
-  router.put('/customer/approve',
-    approveCustomer,
-    returnUser
-  ;)
 
   
 
