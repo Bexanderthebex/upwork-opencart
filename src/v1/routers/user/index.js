@@ -62,12 +62,6 @@ export default function () {
     printUser
   );
 
-
-  router.put('/customer/approve/:id',
-    approveCustomer,
-    returnUser
-  );
-
   router.delete('/customer/:id',
     deleteCustomer,
     returnUser
@@ -252,20 +246,6 @@ export default function () {
     }
   }
 
-
-  async function approveCustomer(req, res, next) {
-    try {
-      req.item = await user.approveCustomer(req.params.id);
-      if (!req.item) {
-        return next(new errors.NotFound('Customer not found'));
-      }
-      next();
-    } catch (err) {
-      next(err);
-    }
-  }
-
-
   //last step
   async function createCustomer (req, res, next) {
     try {
@@ -273,15 +253,19 @@ export default function () {
       next();
     } catch (err) {
       next(err);
+    }
   }
 
   async function deleteCustomer(req, res, next){
     try {
-      req.item = await user.deleteCustomer(req.params.id);
-      if (!req.item) {
-        return next(new errors.NotFound('Customer not found'));
+      //just trying to make sure nothing else is deleted...
+      if(typeof req.params.id!== 'undefined' && req.params.id!==null){
+        req.item = await user.deleteCustomer(req.params.id);
+        if (!req.item) {
+          return next(new errors.NotFound('Customer not found'));
+        }
+        next();  
       }
-      next();
     } catch (err) {
       next(err);
     }
