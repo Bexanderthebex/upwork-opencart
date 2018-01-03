@@ -51,6 +51,23 @@ export default function () {
     returnUser
   );
 
+  router.put('/customer/approve/:id',
+    approveCustomer,
+    returnUser
+  );
+
+  router.delete('/customer/:id',
+    deleteCustomer,
+    returnUser
+  );
+
+  router.get('/customer',
+    getCustomers,
+    returnUser
+  );
+
+  
+
   async function findUniqueUser (req, res, next) {
     try {
       req.item = await user.findUniqueUsers();
@@ -166,6 +183,42 @@ export default function () {
         return next(
           new errors.NotFound('Unique Transactions Not Found')
         );
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function getCustomers (req, res, next) {
+    try {
+      req.item = await user.getCustomers(req.query);
+      if (!req.item) {
+        return next(new errors.NotFound('Customers not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function approveCustomer(req, res, next) {
+    try {
+      req.item = await user.approveCustomer(req.params.id);
+      if (!req.item) {
+        return next(new errors.NotFound('Customer not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function deleteCustomer(req, res, next){
+    try {
+      req.item = await user.deleteCustomer(req.params.id);
+      if (!req.item) {
+        return next(new errors.NotFound('Customer not found'));
       }
       next();
     } catch (err) {
