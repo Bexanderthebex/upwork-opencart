@@ -37,6 +37,12 @@ export default function () {
     returnProduct
   );
 
+  //this one still have no data in the database yet
+  router.get('/getLastFourStockingReport',
+    getLastFourStockingReport,
+    returnProduct
+  );
+
   //create functions here
   async function getTotalOrders(req, res, next) {
     try {
@@ -101,6 +107,18 @@ export default function () {
   async function getMostNotifyMeItems (req, res, next) {
     try {
       req.item = await products.getMostNotifyMeItems();
+      if (!req.item) {
+        return next(new errors.NotFound('Most Returned Items not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function getLastFourStockingReport (req, res, next) {
+    try {
+      req.item = await products.getLastFourStockingReport();
       if (!req.item) {
         return next(new errors.NotFound('Most Returned Items not found'));
       }

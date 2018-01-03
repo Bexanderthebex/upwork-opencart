@@ -1,7 +1,7 @@
 #[nd]get online employees
 SELECT DISTINCT(a.`user_id`), u.username FROM `oc_user_activity` as a LEFT JOIN oc_user as u ON a.user_id = u.user_id WHERE 1 and u.user_role = 'picking' and `logout` is null;
 
-#get last four's stocking reports
+#get last four's stocking reports x
 SELECT CONCAT(u.firstname, ' ', u.lastname) as name, COUNT(s.id) as total FROM `oc_user_stock_history` AS s INNER JOIN oc_user as u ON s.user_id = u.user_id  WHERE s.user_id IN(SELECT user_id from oc_user_activity WHERE logout is null) and `stock_time` > (NOW() - INTERVAL 240 MINUTE) GROUP BY s.user_id ORDER BY total ASC;
 
 #get total orders x
@@ -20,10 +20,10 @@ SELECT order_id FROM oc_order where total>0;
 #get unique users x
 SELECT COUNT( DISTINCT(ip_address)) as ttl from oc_user_truck;
 
-#get unique transactions 
+#get unique transactions x
 SELECT COUNT(DISTINCT(customer_id)) as ttl from  oc_order;
 
-#get total revenue
+#get total revenue x
 SELECT sum(total) as ttl  from oc_order;
 
 #get recent activity x
@@ -40,7 +40,7 @@ select p.product_id, pd.name, p.model, p.quantity, p.image from oc_product as p 
 select op.product_id, op.name, op.model, count(op.product_id) as cnt, sum(p.price) as revenue, p.image from oc_order_product as op INNER JOIN oc_product as p ON op.product_id = p.product_id group by op.product_id order by revenue desc limit 50;
 
 
-#get top category revenue
+#get top category revenue x
 select DISTINCT(cd.category_id) as cid,  cd.name as category_name, sum(p.price) as revenue, cd.description as category_description  from oc_order_product as op INNER JOIN oc_product as p ON op.product_id = p.product_id LEFT JOIN oc_product_to_category as c ON p.product_id = c.product_id LEFT JOIN oc_category_description as cd ON c.category_id = cd.category_id group by cd.category_id order by revenue desc limit 50;
 
 #get most returned items x

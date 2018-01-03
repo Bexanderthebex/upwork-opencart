@@ -152,6 +152,23 @@ function getRecentActivity (delivery) {
   });
 }
 
+function getUniqueTransactions () {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query =
+        'SELECT COUNT(DISTINCT(customer_id)) as ttl from  oc_order';
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
 export default {
   findUniqueUsers,
   getTotalCustomers,
@@ -160,7 +177,8 @@ export default {
   getTopStoker,
   getTopPicker,
   getTopHaular,
-  getRecentActivity
+  getRecentActivity,
+  getUniqueTransactions
 }
 
 

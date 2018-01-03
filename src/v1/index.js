@@ -3,6 +3,7 @@ import express from 'express';
 //import routers
 import user from './routers/user';
 import products from './routers/products';
+import revenue from './routers/revenue';
 
 // declare routers here
 export default function () {
@@ -10,6 +11,7 @@ export default function () {
 
   router.use('/user', user());
   router.use('/products', products());
+  router.use('/revenue', revenue());
 
   return router;
 }
