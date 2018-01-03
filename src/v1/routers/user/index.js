@@ -36,8 +36,13 @@ export default function () {
     returnUser  
   );
 
-  router.get('/getTopHoular/:delivery',
-    getTopHoular,
+  router.get('/getTopHaular/:delivery',
+    getTopHaular,
+    returnUser
+  );
+
+  router.get('/getRecentActivity',
+    getRecentActivity,
     returnUser
   );
 
@@ -111,7 +116,6 @@ export default function () {
     try {
       req.item = await user.getTopPicker(req.params.p_type);
       if (!req.item) {
-        console.log('pumasok dito');
         return next(
           new errors.NotFound('Top Picker not found')
         );
@@ -122,12 +126,24 @@ export default function () {
     }
   }
 
-  async function getTopHoular (req, res, next) {
+  async function getTopHaular (req, res, next) {
     try {
-      console.log(req.params.delivery);
       req.item = await user.getTopPicker(req.params.delivery);
       if (!req.item) {
-        console.log('pumasok dito');
+        return next(
+          new errors.NotFound('Top Hoular not found')
+        );
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function getRecentActivity(req, res, next) {
+    try {
+      req.item = await user.getRecentActivity();
+      if (!req.item) {
         return next(
           new errors.NotFound('Top Hoular not found')
         );
