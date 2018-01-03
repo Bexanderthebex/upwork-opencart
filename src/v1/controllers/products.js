@@ -138,6 +138,46 @@ function getLastFourStockingReport () {
   });
 }
 
+function getLatestItemReturn () {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query =
+        `SELECT return_action_id, count(return_id) as refunded 
+        FROM oc_return group by return_action_id;`;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function getLatestOrders () {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query =
+        `SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) 
+        AS customer, (SELECT os.name FROM oc_order_status os 
+        WHERE os.order_status_id = o.order_status_id AND os.language_id = 1) 
+        AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, 
+        o.date_added, o.date_modified FROM oc_order o 
+        WHERE o.order_status_id > '0' order by o.date_added DESC LIMIT 0,5;`;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
 export default {
   getTotalOrders,
   getMostSoldItems,
@@ -145,5 +185,7 @@ export default {
   getTopProductRevenue,
   getMostReturnedItems,
   getMostNotifyMeItems,
-  getLastFourStockingReport
+  getLastFourStockingReport,
+  getLatestItemReturn,
+  getLatestOrders
 }

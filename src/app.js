@@ -16,7 +16,7 @@ app.use(logger('dev'));
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/v1', api());
+app.use('/v1/admin', api());
 
 http.createServer(app).listen(3000, () => {
   console.log(`API is listening on http://127.0.0.1:${port}`)

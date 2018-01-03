@@ -7,39 +7,50 @@ export default function () {
   var router = express.Router();
 
   //create routes here
-  router.get('/getTotalOrders',
+  router.get('/orders/total',
     getTotalOrders,
     returnProduct
   );
   
-  router.get('/getMostSoldItems',
+  router.get('/items/sold/most',
     getMostSoldItems,
     returnProduct
   );
 
-  router.get('/getMostAvailableItems',
+  router.get('/items/available/most',
     getMostAvailableItems,
     returnProduct
   );
 
-  router.get('/getTopProductRevenue',
+  //consider moving this to revenue api
+  router.get('/revenue/top',
     getTopProductRevenue,
     returnProduct
   );
 
-  router.get('/getMostReturnedItems',
+  router.get('/items/returned/most',
     getMostReturnedItems,
     returnProduct
   );
 
-  router.get('/getMostNotifyMeItems',
+  router.get('/items/notifyme/most',
     getMostNotifyMeItems,
     returnProduct
   );
 
   //this one still have no data in the database yet
-  router.get('/getLastFourStockingReport',
+  router.get('/stocking/lastfour/report',
     getLastFourStockingReport,
+    returnProduct
+  );
+
+  router.get('/item/return/lastest',
+    getLatestItemReturn,
+    returnProduct
+  );
+
+  router.get('/orders/latest',
+    getLatestOrders,
     returnProduct
   );
 
@@ -121,6 +132,30 @@ export default function () {
       req.item = await products.getLastFourStockingReport();
       if (!req.item) {
         return next(new errors.NotFound('Most Returned Items not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function getLatestItemReturn (req, res, next) {
+    try {
+      req.item = await products.getLatestItemReturn();
+      if (!req.item) {
+        return next(new errors.NotFound('Latest returned item not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function getLatestOrders (req, res, next) {
+    try {
+      req.item = await products.getLatestOrders();
+      if (!req.item) {
+        return next(new errors.NotFound('latest orders not found'));
       }
       next();
     } catch (err) {

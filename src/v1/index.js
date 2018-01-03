@@ -1,3 +1,8 @@
+/* 
+  TODO:
+    - ADD middleware for admin account authentication for the API's
+*/
+
 import express from 'express';
 
 //import routers
