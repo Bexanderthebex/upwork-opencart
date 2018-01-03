@@ -51,6 +51,7 @@ export default function () {
     returnUser
   );
 
+
   //check if email exists first
   //if yes, return email already exists
   //else, check if email is valid
@@ -60,6 +61,25 @@ export default function () {
     validateEmail,
     printUser
   );
+
+
+  router.put('/customer/approve/:id',
+    approveCustomer,
+    returnUser
+  );
+
+  router.delete('/customer/:id',
+    deleteCustomer,
+    returnUser
+  );
+
+  router.get('/customer',
+    getCustomers,
+    returnUser
+  );
+
+  
+
 
   async function findUniqueUser (req, res, next) {
     try {
@@ -183,6 +203,7 @@ export default function () {
     }
   }
 
+
   async function findEmail (req, res, next) {
     try {
       req.user = await user.findEmail(req.body.email);
@@ -208,6 +229,20 @@ export default function () {
     }
   }
 
+
+  async function getCustomers (req, res, next) {
+    try {
+      req.item = await user.getCustomers(req.query);
+      if (!req.item) {
+        return next(new errors.NotFound('Customers not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
   async function hashPassword (req, res, next) {
     try {
       req.password = await user.hashPassword();
@@ -217,6 +252,20 @@ export default function () {
     }
   }
 
+
+  async function approveCustomer(req, res, next) {
+    try {
+      req.item = await user.approveCustomer(req.params.id);
+      if (!req.item) {
+        return next(new errors.NotFound('Customer not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
   //last step
   async function createCustomer (req, res, next) {
     try {
@@ -224,7 +273,19 @@ export default function () {
       next();
     } catch (err) {
       next(err);
+  }
+
+  async function deleteCustomer(req, res, next){
+    try {
+      req.item = await user.deleteCustomer(req.params.id);
+      if (!req.item) {
+        return next(new errors.NotFound('Customer not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
     }
+
   }  
 
   //dev function. remove this in production
