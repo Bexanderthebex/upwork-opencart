@@ -26,7 +26,7 @@ SELECT COUNT(DISTINCT(customer_id)) as ttl from  oc_order;
 #get total revenue
 SELECT sum(total) as ttl  from oc_order;
 
-#get recent activity 
+#get recent activity x
 SELECT a.key, a.data, a.date_added FROM ((SELECT CONCAT('customer_', ca.key) AS `key`, ca.data, ca.date_added FROM oc_customer_activity ca) UNION (SELECT CONCAT('affiliate_', aa.key) AS `key`, aa.data, aa.date_added FROM oc_affiliate_activity aa)) a ORDER BY a.date_added DESC LIMIT 0,5;
 
 
@@ -58,6 +58,6 @@ SELECT count(p.barcode_user_id) as cnt, p.barcode_user_id as user_id, c.firstnam
 #get top picker x
 SELECT count(p.assinged_to) as cnt, p.assinged_to as user_id, c.firstname, c.lastname, c.email, c.phone  FROM oc_order_pickuptime as p INNER JOIN oc_user as c ON p.assinged_to = c.user_id where p.type = 'pickup' and p.status = '2' group by p.assinged_to order by count(p.assinged_to) DESC limit 50;
 
-#get top hoular x
+#get top haular x
 SELECT count(p.assinged_to) as cnt, c.firstname, p.assinged_to as user_id, c.lastname, c.email, c.phone  FROM oc_order_pickuptime as p INNER JOIN oc_user as c ON p.assinged_to = c.user_id where p.type = 'delivery' and p.status = '2' group by p.assinged_to order by count(p.assinged_to) DESC limit 50;
 
