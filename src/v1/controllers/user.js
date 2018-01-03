@@ -18,6 +18,91 @@ function findUniqueUsers () {
   });
 }
 
+//get all customers with filtered results
+//filter can contain the ff. attributes
+//  name, customer_group(int), date_added(Y-m-d), email, approved(int), status(int), 
+//  ip_address, and sort(use actual attribute names(ex. id, name) ,default is name).
+function getCustomers(filter){
+  return new Promise((resolve, reject) =>{
+    getConnection((err, connection) => {
+      var query = `SELECT *, CONCAT(c.firstname, ' ', c.lastname) AS name, cgd.name AS customer_group 
+                  FROM oc_customer c LEFT JOIN oc_customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) 
+                  WHERE cgd.language_id = 1 `;
+      if(typeof filter.name!== 'undefined'){
+        query = query + "AND CONCAT(c.firstname, '', c.lastname) LIKE '%" + filter.name + "%' ";
+      }
+      if(typeof filter.customer_group !== 'undefined'){
+        query = query + "AND c.customer_group_id = " + filter.customer_group + " ";
+      }
+      if(typeof filter.date_added !== 'undefined'){
+        query = query + "AND DATE(c.date_added) = DATE('" + filter.date_added + "') ";
+      }
+      if(typeof filter.email !== 'undefined'){
+        query = query + "AND c.email LIKE '%" + filter.email + "%' ";
+      }
+      if(typeof filter.approved !== 'undefined'){
+        query = query + "AND c.approved = " + filter.approved + " ";
+      }
+      if(typeof filter.status !== 'undefined'){
+        query = query + "AND c.status = " + filter.status + " ";
+      }
+      if(typeof filter.ip_address !== 'undefined'){
+        query = query + "AND (SELECT customer_id FROM oc_customer_ip WHERE ip = '" + filter.ip_address + "')";
+      }
+
+      if(typeof filter.sort !== 'undefined'){
+        query = query + "ORDER BY " + filter.sort + " ";
+      }
+      else{
+        query = query + "ORDER BY name "; 
+      }
+
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function approveCustomer (id) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query = '';
+      connection.query(query, (err, result) => {
+        if(err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function deleteCustomer (id) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query = '';
+      connection.query(query, (err, result) => {
+        if(err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    
+    });
+  });
+}
+
 function getTotalCustomers () {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
@@ -170,7 +255,10 @@ function getUniqueTransactions () {
 }
 
 export default {
+  approveCustomer,
+  deleteCustomer,
   findUniqueUsers,
+  getCustomers,
   getTotalCustomers,
   getTotalOnline,
   getMostReturnedUser,
