@@ -51,6 +51,16 @@ export default function () {
     returnUser
   );
 
+  //check if email exists first
+  //if yes, return email already exists
+  //else, check if email is valid
+  //create salt and hash password
+  router.post('/customer/add',
+    findEmail,
+    validateEmail,
+    printUser
+  );
+
   async function findUniqueUser (req, res, next) {
     try {
       req.item = await user.findUniqueUsers();
@@ -171,6 +181,55 @@ export default function () {
     } catch (err) {
       next(err);
     }
+  }
+
+  async function findEmail (req, res, next) {
+    try {
+      req.user = await user.findEmail(req.body.email);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function validateEmail (req, res, next) {
+    try {
+      if (req.user.length > 0) {
+        return next(new errors.BadRequest('Email already registered'));
+      }
+
+      req.isEmailValid = await user.validateEmail(req.body.email);
+      if (!req.isEmailValid) {
+        return next(new errors.BadRequest('Email not valid'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function hashPassword (req, res, next) {
+    try {
+      
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  //last step
+  async function createCustomer (req, res, next) {
+    try {
+      req.user = await user.findEmail(req.body.email);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }  
+
+  //dev function. remove this in production
+  function printUser (req, res) {
+    res.json(req.user);
   }
 
   function returnUser (req, res) {
