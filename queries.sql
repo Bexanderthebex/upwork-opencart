@@ -61,3 +61,8 @@ SELECT count(p.assinged_to) as cnt, p.assinged_to as user_id, c.firstname, c.las
 #get top haular x
 SELECT count(p.assinged_to) as cnt, c.firstname, p.assinged_to as user_id, c.lastname, c.email, c.phone  FROM oc_order_pickuptime as p INNER JOIN oc_user as c ON p.assinged_to = c.user_id where p.type = 'delivery' and p.status = '2' group by p.assinged_to order by count(p.assinged_to) DESC limit 50;
 
+#get latest item return x
+SELECT return_action_id, count(return_id) as refunded FROM oc_return group by return_action_id;
+
+#get latest orders 
+SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM oc_order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = 1) AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified FROM oc_order o WHERE o.order_status_id > '0' order by o.date_added DESC LIMIT 0,5;

@@ -6,47 +6,47 @@ import errors from '../../../utils/errors';
 export default function () {
   var router = express.Router();
 
-  router.get('/findUniqueUser',
+  router.get('/unique',
     findUniqueUser,
     returnUser
   );
 
-  router.get('/getTotalCustomer',
+  router.get('/customer/total',
     getTotalCustomers,
     returnUser
   );
 
-  router.get('/getTotalOnline',
+  router.get('/customer/online/total',
     getTotalOnline,
     returnUser
   );
 
-  router.get('/getMostReturnedUser',
+  router.get('/customer/most/returned',
     getMostReturnedUser,
     returnUser
   );
 
-  router.get('/getTopStoker',
+  router.get('/customer/stoker/top',
     getTopStoker,
     returnUser
   );
 
-  router.get('/getTopPicker/:p_type',
+  router.get('/customer/picker/top/:p_type',
     getTopPicker,
     returnUser  
   );
 
-  router.get('/getTopHaular/:delivery',
+  router.get('/customer/haular/top/:delivery',
     getTopHaular,
     returnUser
   );
 
-  router.get('/getRecentActivity',
+  router.get('/customer/activity/recent',
     getRecentActivity,
     returnUser
   );
 
-  router.get('/getUniqueTransactions',
+  router.get('/customer/transactions/unique',
     getUniqueTransactions,
     returnUser
   );
