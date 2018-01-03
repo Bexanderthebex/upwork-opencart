@@ -116,11 +116,34 @@ function getMostNotifyMeItems () {
   });
 }
 
+function getLastFourStockingReport () {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query =
+        `SELECT CONCAT(u.firstname, ' ', u.lastname) as name, 
+        COUNT(s.id) as total FROM oc_user_stock_history AS s 
+        INNER JOIN oc_user as u ON s.user_id = u.user_id  
+        WHERE s.user_id IN(SELECT user_id from oc_user_activity 
+        WHERE logout is null) and stock_time > (NOW() - INTERVAL 240 MINUTE) 
+        GROUP BY s.user_id ORDER BY total ASC;`;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
 export default {
   getTotalOrders,
   getMostSoldItems,
   getMostAvailableItems,
   getTopProductRevenue,
   getMostReturnedItems,
-  getMostNotifyMeItems
+  getMostNotifyMeItems,
+  getLastFourStockingReport
 }
