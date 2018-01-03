@@ -1,4 +1,6 @@
 import getConnection from '../../utils/db';
+import isEmail from 'validator/lib/isEmail';
+import bcrypt from 'bcrypt';
 
 //get unique users
 function findUniqueUsers () {
@@ -254,6 +256,55 @@ function getUniqueTransactions () {
   });
 }
 
+// x
+function findEmail (email) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      var query = `SELECT email FROM oc_customer WHERE '${email}' LIKE email`;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+// check if email is valid. uses validator.js x
+function validateEmail (email) {
+  return new Promise((resolve, reject) => {
+    const valid = isEmail(email);
+    resolve(valid);
+  });
+}
+
+function hashPassword (password) {
+  return new Promise((resolve, reject) => {
+
+  });
+}
+
+//last step x
+function insertCustomer (user) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      //put add insert user here
+      var query = `SELECT email FROM oc_customer WHERE '${email}' LIKE email`;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
 export default {
   approveCustomer,
   deleteCustomer,
@@ -266,7 +317,9 @@ export default {
   getTopPicker,
   getTopHaular,
   getRecentActivity,
-  getUniqueTransactions
+  getUniqueTransactions,
+  findEmail,
+  validateEmail
 }
 
 

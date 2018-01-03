@@ -51,6 +51,18 @@ export default function () {
     returnUser
   );
 
+
+  //check if email exists first
+  //if yes, return email already exists
+  //else, check if email is valid
+  //create salt and hash password
+  router.post('/customer/add',
+    findEmail,
+    validateEmail,
+    printUser
+  );
+
+
   router.put('/customer/approve/:id',
     approveCustomer,
     returnUser
@@ -67,6 +79,7 @@ export default function () {
   );
 
   
+
 
   async function findUniqueUser (req, res, next) {
     try {
@@ -190,6 +203,33 @@ export default function () {
     }
   }
 
+
+  async function findEmail (req, res, next) {
+    try {
+      req.user = await user.findEmail(req.body.email);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function validateEmail (req, res, next) {
+    try {
+      if (req.user.length > 0) {
+        return next(new errors.BadRequest('Email already registered'));
+      }
+
+      req.isEmailValid = await user.validateEmail(req.body.email);
+      if (!req.isEmailValid) {
+        return next(new errors.BadRequest('Email not valid'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
   async function getCustomers (req, res, next) {
     try {
       req.item = await user.getCustomers(req.query);
@@ -201,6 +241,17 @@ export default function () {
       next(err);
     }
   }
+
+
+  async function hashPassword (req, res, next) {
+    try {
+      req.password = await user.hashPassword();
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
 
   async function approveCustomer(req, res, next) {
     try {
@@ -214,6 +265,16 @@ export default function () {
     }
   }
 
+
+  //last step
+  async function createCustomer (req, res, next) {
+    try {
+      req.user = await user.findEmail(req.body.email);
+      next();
+    } catch (err) {
+      next(err);
+  }
+
   async function deleteCustomer(req, res, next){
     try {
       req.item = await user.deleteCustomer(req.params.id);
@@ -224,6 +285,12 @@ export default function () {
     } catch (err) {
       next(err);
     }
+
+  }  
+
+  //dev function. remove this in production
+  function printUser (req, res) {
+    res.json(req.user);
   }
 
   function returnUser (req, res) {
