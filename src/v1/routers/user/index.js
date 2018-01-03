@@ -210,7 +210,7 @@ export default function () {
 
   async function hashPassword (req, res, next) {
     try {
-      
+      req.password = await user.hashPassword();
       next();
     } catch (err) {
       next(err);
