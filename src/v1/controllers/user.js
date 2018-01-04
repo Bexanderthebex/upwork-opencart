@@ -409,14 +409,35 @@ function addCustomerDefaultAddress (addressId, customerId) {
   });
 }
 
-function editCustomerGroup (customerGroupId) {
+function editCustomerGroup (customerGroupId, customerId) {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
 
       var query =
         `
-          UPDATE oc_customer SET customer_group_id = ${addressId} 
-          WHERE customer_id = ${customerId};
+          UPDATE oc_customer SET customer_group_id = ${customerGroupId}
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+//start 
+function editCustomerFirstName (customerFirstName, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET firstname = "${customerFirstName}"
+          WHERE customer_id = ${customerId}
         `;
       connection.query(query, (err, result) => {
         if (err) {
@@ -430,6 +451,215 @@ function editCustomerGroup (customerGroupId) {
   });
 }
 
+function editCustomerLastName (customerLastName, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET lastname = "${customerLastName}"
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerEmail (customerEmail, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET email = "${customerEmail}"
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerTelephone (customerTelephone, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET telephone = "${customerTelephone}"
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerFax (customerFax, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET fax = "${customerFax}"
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerSalt (customerSalt, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET salt = "${customerSalt}"
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerPassword (customerPassword, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET password = "${customerPassword}"
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerNewsletter (customerNewletter, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET newsletter = ${customerNewletter}
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerStatus (customerStatus, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET status = ${customerStatus}
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerApproved (customerApproved, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET approved = ${customerApproved}
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerSafe (customerSafe, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET safe = ${customerSafe}
+          WHERE customer_id = ${customerId}
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
 
 export default {
   deleteCustomer,
@@ -449,7 +679,19 @@ export default {
   hashPassword,
   addCustomer,
   addCustomerAddress,
-  addCustomerDefaultAddress
+  addCustomerDefaultAddress,
+  editCustomerGroup,
+  editCustomerFirstName,
+  editCustomerLastName,
+  editCustomerEmail,
+  editCustomerTelephone,
+  editCustomerFax,
+  editCustomerSalt,
+  editCustomerPassword,
+  editCustomerNewsletter,
+  editCustomerStatus,
+  editCustomerApproved,
+  editCustomerSafe
 }
 
 
