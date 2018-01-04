@@ -72,26 +72,13 @@ function getCustomers(filter){
   });
 }
 
-function approveCustomer (id) {
-  return new Promise((resolve, reject) => {
-    getConnection((err, connection) => {
-      var query = '';
-      connection.query(query, (err, result) => {
-        if(err) {
-          console.log(err);
-          reject(err);
-        }
-        connection.release();
-        resolve(result);
-      });
-    });
-  });
-}
-
+//delete a customer with a given id
 function deleteCustomer (id) {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
-      var query = '';
+      //used a procedure since in the PHP code, there were multiple delete statements
+      var query = 'CALL delete_customer(' + id + ');';
+      // console.log(query);
       connection.query(query, (err, result) => {
         if(err) {
           console.log(err);
@@ -101,6 +88,7 @@ function deleteCustomer (id) {
         resolve(result);
       });
     
+        // resolve();
     });
   });
 }
@@ -445,7 +433,6 @@ function editCustomerGroup (customerGroupId) {
 
 
 export default {
-  approveCustomer,
   deleteCustomer,
   findUniqueUsers,
   getCustomers,

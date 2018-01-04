@@ -64,19 +64,6 @@ export default function () {
     returnDone
   );
 
-  // router.put('/customer/edit',
-  //   findEmail,
-  //   validateEmail,
-  //   generateSalt,
-  //   hashPassword,
-
-  // );
-
-  router.put('/customer/approve/:id',
-    approveCustomer,
-    returnUser
-  );
-
   router.delete('/customer/:id',
     deleteCustomer,
     returnUser
@@ -272,9 +259,36 @@ export default function () {
   }
 
   //last step
-  async function addCustomer (req, res, next) {
+  async function createCustomer (req, res, next) {
     try {
-      var customerId = 
+      req.item = await user.approveCustomer(req.params.id);
+      if (!req.item) {
+        return next(new errors.NotFound('Customer not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function deleteCustomer(req, res, next){
+    try {
+      //just trying to make sure nothing else is deleted...
+      if(typeof req.params.id!== 'undefined' && req.params.id!==null){
+        req.item = await user.deleteCustomer(req.params.id);
+        if (!req.item) {
+          return next(new errors.NotFound('Customer not found'));
+        }
+        next();  
+      }
+    } catch (err) {
+      next(err);
+    }
+
+  }
+  async function addCustomer(req, res, next) {
+    try {
+      var customerId =
         await user.addCustomer(req.body.user, req.password, req.salt);
 
       if (!customerId) {
@@ -298,7 +312,7 @@ export default function () {
           for (var i = 0; i < req.body.address.length; i++) {
             if (req.body.address[i].default == true) {
               var customerId = req.customerId;
-              var addressId = 
+              var addressId =
                 await user.addCustomerAddress(
                   req.body.address[i],
                   customerId
@@ -307,7 +321,7 @@ export default function () {
               //add the LAST_INSERT_ID() value as a parameter to:
               //addCustomerDefaultAddress()
               await user.addCustomerDefaultAddress(
-                addressId[1][0].address_id, 
+                addressId[1][0].address_id,
                 req.customerId
               );
 
@@ -326,10 +340,10 @@ export default function () {
           //add the LAST_INSERT_ID() value as a parameter to:
           //addCustomerDefaultAddress()
           await user.addCustomerDefaultAddress(
-            addressId[1][0].address_id, 
+            addressId[1][0].address_id,
             req.customerId
           );
-        } else { 
+        } else {
           await user.addCustomerAddress(
             req.body.address[0],
             req.customerId
@@ -342,30 +356,6 @@ export default function () {
     }
   }
 
-  async function approveCustomer(req, res, next) {
-    try {
-      req.item = await user.approveCustomer(req.params.id);
-      if (!req.item) {
-        return next(new errors.NotFound('Customer not found'));
-      }
-      next();
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  async function deleteCustomer(req, res, next){
-    try {
-      req.item = await user.deleteCustomer(req.params.id);
-      if (!req.item) {
-        return next(new errors.NotFound('Customer not found'));
-      }
-      next();
-    } catch (err) {
-      next(err);
-    }
-
-  }  
 
   //dev function. remove this in production
   function printUser (req, res) {
