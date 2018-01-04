@@ -286,6 +286,7 @@ export default function () {
     }
 
   }
+
   async function addCustomer(req, res, next) {
     try {
       var customerId =
@@ -307,15 +308,14 @@ export default function () {
     try {
       if (req.body.address && req.body.address.length >= 1) {
         if (req.body.address.length > 1) {
-          console.log(`req.customerId: ${req.customerId}`)
-          console.log(`req.body.address.length: ${req.body.address.length}`);
           for (var i = 0; i < req.body.address.length; i++) {
+            console.log(`i: ${i}`);
             if (req.body.address[i].default == true) {
               var customerId = req.customerId;
               var addressId =
                 await user.addCustomerAddress(
                   req.body.address[i],
-                  customerId
+                  req.customerId
                 );
               console.log("lumampas ng add customer address");
               //add the LAST_INSERT_ID() value as a parameter to:
@@ -325,13 +325,16 @@ export default function () {
                 req.customerId
               );
 
+              console.log('lumpas ng addCustomerDefault');
               continue;
             }
-            await user.addCustomerAddress(req.body.address[i]);
+            await user.addCustomerAddress(req.body.address[i], req.customerId);
+            console.log("nag-addCustomerAddress")
           }
         }
         /* case for only one address */
-        if (req.body.address[0].default == true) {
+        else if (req.body.address[0].default == true && req.body.address.length == 1) {
+          console.log("pumasok sa only one case");
           var addressId = await user.addCustomerAddress(
             req.body.address[0],
             req.customerId

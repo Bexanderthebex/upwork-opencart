@@ -343,7 +343,6 @@ function addCustomer (user, password, salt) {
 //by other insert since it is maintained per connection basis
 function addCustomerAddress (address, customerId) {
   return new Promise((resolve, reject) => {
-    console.log(`controller customerId: ${customerId.customerId}`);
     getConnection((err, connection) => {
       var query = 
         `
