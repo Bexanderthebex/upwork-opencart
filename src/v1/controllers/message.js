@@ -63,10 +63,14 @@ function getCustomers(filter){
 	});
 }
 
-function sendMessagetoCustomer(id, message){
+//assume that user_id is sender_id when sender is admin
+//but when sender is customer, user_id is 0
+//works for now, but needed to be fixed once sessions are live
+function sendMessagetoCustomer(sender_id , recipient_id, message){
 	return new Promise((resolve, reject) => {
 		getConnection((err, connection) => {
-			var query = '';
+			var query = `INSERT INTO oc_msp_message SET user_id = `+ sender_id + `, customer_id = ` + recipient_id + `, message = '`+ message + `', sender = 'user', date_added = NOW()`;
+			console.log(query);
 			connection.query(query, (err, result) => {
 		        if (err) {
 		          console.log(err);
@@ -98,10 +102,10 @@ function getMessagesfromCustomer(id){
 	});
 }
 
-function deleteMesssagesfromCustomer(id){
+function deleteMessagesfromCustomer(id){
 	return new Promise((resolve, reject) => {
 		getConnection((err, connection) => {
-			var query = '';
+			var query = `UPDATE oc_msp_message SET hide_admin=1 WHERE customer_id=`+ id + ` `;
 
 			connection.query(query, (err, result) => {
 		        if (err) {
@@ -122,7 +126,7 @@ export default {
 	getCustomers,
 	getMessagesfromCustomer,
 	sendMessagetoCustomer,
-	deleteMesssagesfromCustomer,
+	deleteMessagesfromCustomer,
 
 }
 

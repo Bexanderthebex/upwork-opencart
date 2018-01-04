@@ -6,12 +6,7 @@ import errors from '../../../utils/errors';
 export default function () {
   var router = express.Router();
 
-  router.get('/customer/:id',
-  	getMessagesfromCustomer,
-  	returnUser
-  );
-
-  router.post('/customer/:id',
+  router.post('/customer/send',
   	sendMessagetoCustomer,
   	returnUser
   );
@@ -20,6 +15,12 @@ export default function () {
   	deleteMessagesfromCustomer,
   	returnUser
   );
+
+  router.get('/customer/:id',
+    getMessagesfromCustomer,
+    returnUser
+  );
+
 
   router.get('/customer',
   	getCustomers,
@@ -52,10 +53,12 @@ export default function () {
       next(err);
     }
   }
-
+  //specific only for admin to customer, different implementation needed for customer to admin
   async function sendMessagetoCustomer(req, res, next){
     try {
-      req.item = await message.sendMessagetoCustomer(req.params.id, req.body);
+      var admin_id = 62; //hardcoded admin's user id for now, must be acquired through sessions once live
+      console.log(req.body);
+      req.item = await message.sendMessagetoCustomer(admin_id,req.body.customer_id, req.body.message);
       if (!req.item) {
         return next(new errors.NotFound('Customer not found'));
       }
@@ -67,7 +70,7 @@ export default function () {
 
   async function deleteMessagesfromCustomer(req, res, next){
     try {
-      req.item = await message.deleteMessagesfromCustomer(req.query);
+      req.item = await message.deleteMessagesfromCustomer(req.params.id);
       if (!req.item) {
         return next(new errors.NotFound('Customer not found'));
       }
