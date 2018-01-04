@@ -421,6 +421,27 @@ function addCustomerDefaultAddress (addressId, customerId) {
   });
 }
 
+function editCustomerGroup (customerGroupId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET customer_group_id = ${addressId} 
+          WHERE customer_id = ${customerId};
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
 
 export default {
   approveCustomer,

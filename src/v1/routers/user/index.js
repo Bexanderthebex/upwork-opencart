@@ -288,7 +288,8 @@ export default function () {
 
   async function addCustomerAddress(req, res, next) {
     try {
-      if (req.body.address) {
+      if (req.body.address && req.body.address.length == 1) {
+
         if (req.body.address.length > 1) {
           for (i = 0; i < req.body.address.length; i++) {
             if (req.body.address[i].default == true) {
