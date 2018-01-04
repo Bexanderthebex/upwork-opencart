@@ -1,5 +1,59 @@
 import getConnection from '../../utils/db';
 
+//getProducts
+//filters include name, model(product code), price, quantity, status, sort by, order(asc/desc)
+function getProducts(filter){
+  return new Promise((resolve, reject) =>{
+    getConnection((err, connection) => {
+      var query = `
+      SELECT *, datediff(now(), barcode_time) as age 
+      FROM oc_product p LEFT JOIN oc_product_description pd ON (p.product_id = pd.product_id) 
+      WHERE pd.language_id = 1 `;
+
+      if(typeof filter.name !== 'undefined'){
+        query = query + "AND pd.name LIKE '%" + filter.name + "%' ";
+      }
+      if(typeof filter.model !== 'undefined'){
+        query = query + "AND p.model = " + filter.model + " ";
+      }
+      if(typeof filter.price !== 'undefined'){
+        query = query + "AND p.price LIKE '%" + filter.price + "%' ";
+      }
+      if(typeof filter.quantity !== 'undefined'){
+        query = query + "AND p.quantity = " + filter.quantity + " ";
+      }
+      if(typeof filter.status !== 'undefined'){
+        query = query + "AND p.status = " + filter.status + " ";
+      } 
+      if(typeof filter.sort !== 'undefined'){
+        query = query + "ORDER BY " + filter.sort + " ";
+      }
+
+      else{
+        query = query + "ORDER BY pd.name "; 
+      }
+
+      if(typeof filter.order !== 'undefined'){
+        query = query + filter.order + " ";
+      }
+      else{
+        query = query + "DESC "; 
+      }
+
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+
 function getTotalOrders () {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
@@ -179,6 +233,7 @@ function getLatestOrders () {
 }
 
 export default {
+  getProducts,
   getTotalOrders,
   getMostSoldItems,
   getMostAvailableItems,
