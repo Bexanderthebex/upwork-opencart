@@ -51,17 +51,23 @@ export default function () {
     returnUser
   );
 
-
-  //check if email exists first
-  //if yes, return email already exists
-  //else, check if email is valid
-  //create salt and hash password
   router.post('/customer/add',
     findEmail,
     validateEmail,
-    printUser
+    generateSalt,
+    hashPassword,
+    addCustomer,
+    addCustomerAddress,
+    returnDone
   );
 
+  // router.put('/customer/edit',
+  //   findEmail,
+  //   validateEmail,
+  //   generateSalt,
+  //   hashPassword,
+
+  // );
 
   router.put('/customer/approve/:id',
     approveCustomer,
@@ -77,9 +83,6 @@ export default function () {
     getCustomers,
     returnUser
   );
-
-  
-
 
   async function findUniqueUser (req, res, next) {
     try {
@@ -203,10 +206,12 @@ export default function () {
     }
   }
 
-
   async function findEmail (req, res, next) {
     try {
-      req.user = await user.findEmail(req.body.email);
+      if (!req.body.user.email) {
+        return next(new errors.BadRequest('There is no email provided'));
+      }
+      req.user = await user.findEmail(req.body.user.email);
       next();
     } catch (err) {
       next(err);
@@ -219,7 +224,7 @@ export default function () {
         return next(new errors.BadRequest('Email already registered'));
       }
 
-      req.isEmailValid = await user.validateEmail(req.body.email);
+      req.isEmailValid = await user.validateEmail(req.body.user.email);
       if (!req.isEmailValid) {
         return next(new errors.BadRequest('Email not valid'));
       }
@@ -228,7 +233,6 @@ export default function () {
       next(err);
     }
   }
-
 
   async function getCustomers (req, res, next) {
     try {
@@ -242,16 +246,95 @@ export default function () {
     }
   }
 
-
-  async function hashPassword (req, res, next) {
+  async function generateSalt (req, res, next) {
     try {
-      req.password = await user.hashPassword();
+      req.salt = await user.generateSalt();
       next();
     } catch (err) {
       next(err);
     }
   }
 
+  async function hashPassword (req, res, next) {
+    try {
+      if (!req.body.user.password) {
+        return next(new errors.BadRequest('There is no password provided'))
+      }
+      req.password = 
+        await user.hashPassword(req.body.user.password, req.salt);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  //last step
+  async function addCustomer (req, res, next) {
+    try {
+      var customerId = 
+        await user.addCustomer(req.body.user, req.password, req.salt);
+
+      if (!customerId) {
+        return next(
+          new errors.BadRequest('User was not successfully inserted')
+        );
+      }
+      req.customerId = customerId[1][0].customer_id;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async function addCustomerAddress(req, res, next) {
+    try {
+      if (req.body.address) {
+        if (req.body.address.length > 1) {
+          for (i = 0; i < req.body.address.length; i++) {
+            if (req.body.address[i].default == true) {
+              var addressId = 
+                await user.addCustomerAddress(
+                  req.body.address[i],
+                  req.customerId
+                );
+
+              //add the LAST_INSERT_ID() value as a parameter to:
+              //addCustomerDefaultAddress()
+              await user.addCustomerDefaultAddress(
+                addressId[1][0].address_id, 
+                req.customerId
+              );
+
+              continue;
+            }
+            await user.addCustomerAddress(req.body.address[i]);
+          }
+        }
+        /* case for only one address */
+        if (req.body.address[0].default == true) {
+          var addressId = await user.addCustomerAddress(
+            req.body.address[0],
+            req.customerId
+          );
+
+          //add the LAST_INSERT_ID() value as a parameter to:
+          //addCustomerDefaultAddress()
+          await user.addCustomerDefaultAddress(
+            addressId[1][0].address_id, 
+            req.customerId
+          );
+        } else { 
+          await user.addCustomerAddress(
+            req.body.address[0],
+            req.customerId
+          );
+        }
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
 
   async function approveCustomer(req, res, next) {
     try {
@@ -263,16 +346,6 @@ export default function () {
     } catch (err) {
       next(err);
     }
-  }
-
-
-  //last step
-  async function createCustomer (req, res, next) {
-    try {
-      req.user = await user.findEmail(req.body.email);
-      next();
-    } catch (err) {
-      next(err);
   }
 
   async function deleteCustomer(req, res, next){
@@ -290,7 +363,17 @@ export default function () {
 
   //dev function. remove this in production
   function printUser (req, res) {
-    res.json(req.user);
+    res.json(
+      `
+        user: ${req.user}
+        password: ${req.password}
+        salt: ${req.salt}
+      `
+    );
+  }
+
+  function returnDone (req, res) {
+    res.json("done");
   }
 
   function returnUser (req, res) {
