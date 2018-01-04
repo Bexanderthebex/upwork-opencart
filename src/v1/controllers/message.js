@@ -79,10 +79,12 @@ function sendMessagetoCustomer(id, message){
 	});
 }
 
+
+//get messages from a certain customer
 function getMessagesfromCustomer(id){
 	return new Promise((resolve, reject) => {
 		getConnection((err, connection) => {
-			var query = '';
+			var query = 'SELECT * FROM oc_msp_message WHERE customer_id = '+ id + ' AND hide_admin=0 ORDER BY date_added DESC';
 
 			connection.query(query, (err, result) => {
 		        if (err) {
