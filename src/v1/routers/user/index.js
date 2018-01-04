@@ -51,6 +51,9 @@ export default function () {
     returnUser
   );
 
+  /* 
+
+  */
   router.post('/customer/add',
     findEmail,
     validateEmail,
@@ -288,17 +291,19 @@ export default function () {
 
   async function addCustomerAddress(req, res, next) {
     try {
-      if (req.body.address && req.body.address.length == 1) {
-
+      if (req.body.address && req.body.address.length >= 1) {
         if (req.body.address.length > 1) {
-          for (i = 0; i < req.body.address.length; i++) {
+          console.log(`req.customerId: ${req.customerId}`)
+          console.log(`req.body.address.length: ${req.body.address.length}`);
+          for (var i = 0; i < req.body.address.length; i++) {
             if (req.body.address[i].default == true) {
+              var customerId = req.customerId;
               var addressId = 
                 await user.addCustomerAddress(
                   req.body.address[i],
-                  req.customerId
+                  customerId
                 );
-
+              console.log("lumampas ng add customer address");
               //add the LAST_INSERT_ID() value as a parameter to:
               //addCustomerDefaultAddress()
               await user.addCustomerDefaultAddress(

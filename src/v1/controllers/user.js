@@ -260,7 +260,7 @@ function getUniqueTransactions () {
 function findEmail (email) {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
-      var query = `SELECT email FROM oc_customer WHERE '${email}' LIKE email LIMIT 1`;
+      var query = `SELECT email FROM oc_customer WHERE '${email}' LIKE email`;
       connection.query(query, (err, result) => {
         if (err) {
           console.log(err);
@@ -337,7 +337,7 @@ function addCustomer (user, password, salt) {
               ${user.safe},
               NOW()
             );
-          SELECT LAST_INSERT_ID() as 'customer_id' LIMIT 1;
+          SELECT LAST_INSERT_ID() as 'customer_id';
         `;
       connection.query(query, (err, result) => {
         if (err) {
@@ -355,6 +355,7 @@ function addCustomer (user, password, salt) {
 //by other insert since it is maintained per connection basis
 function addCustomerAddress (address, customerId) {
   return new Promise((resolve, reject) => {
+    console.log(`controller customerId: ${customerId.customerId}`);
     getConnection((err, connection) => {
       var query = 
         `
@@ -386,7 +387,7 @@ function addCustomerAddress (address, customerId) {
               ${address.zone_id},
               "${address.custom_field}"
             );
-          SELECT LAST_INSERT_ID() as 'address_id' LIMIT 1;
+          SELECT LAST_INSERT_ID() as 'address_id';
         `;
       connection.query(query, (err, result) => {
         if (err) {
