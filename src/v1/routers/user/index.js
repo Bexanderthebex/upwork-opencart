@@ -51,9 +51,6 @@ export default function () {
     returnUser
   );
 
-  /* 
-
-  */
   router.post('/customer/add',
     findEmail,
     validateEmail,
@@ -72,6 +69,11 @@ export default function () {
   router.get('/customer',
     getCustomers,
     returnUser
+  );
+
+  router.put('/customer/edit/:customer_id',
+    editCustomer,
+    returnDone
   );
 
   async function findUniqueUser (req, res, next) {
@@ -312,32 +314,32 @@ export default function () {
             if (req.body.address[i].default == true) {
               var customerId = req.customerId;
               var addressId =
-                await user.addCustomerAddress(
+                user.addCustomerAddress(
                   req.body.address[i],
                   req.customerId
                 );
               //add the LAST_INSERT_ID() value as a parameter to:
               //addCustomerDefaultAddress()
-              await user.addCustomerDefaultAddress(
+              user.addCustomerDefaultAddress(
                 addressId[1][0].address_id,
                 req.customerId
               );
 
               continue;
             }
-            await user.addCustomerAddress(req.body.address[i], req.customerId);
+            user.addCustomerAddress(req.body.address[i], req.customerId);
           }
         }
         /* case for only one address */
         else if (req.body.address[0].default == true && req.body.address.length == 1) {
-          var addressId = await user.addCustomerAddress(
+          var addressId = user.addCustomerAddress(
             req.body.address[0],
             req.customerId
           );
 
           //add the LAST_INSERT_ID() value as a parameter to:
           //addCustomerDefaultAddress()
-          await user.addCustomerDefaultAddress(
+          user.addCustomerDefaultAddress(
             addressId[1][0].address_id,
             req.customerId
           );
@@ -354,16 +356,86 @@ export default function () {
     }
   }
 
+  async function editCustomer (req, res, next) {
+    try {
+      //check first if this required fields are present
+      if (req.body.user.firstname == "" || !req.body.user.firstname) {
+        return next(new errors.BadRequest('First name is required'));
+      }
+      if (req.body.user.lastname == "" || !req.body.user.lastname) {
+        return next(new errors.BadRequest('Last name is required'));
+      }
+      if (req.body.user.email == "" || !req.body.user.email) {
+        return next(new errors.BadRequest('email is required'));
+      }
+      if (req.body.user.telephone == "" || !req.body.user.telephone) {
+        return next(new errors.BadRequest('telephone is required'));
+      }
+      if (req.body.user.password == "" || !req.body.user.password) {
+        return next(new errors.BadRequest('password is required'));
+      }
 
-  //dev function. remove this in production
-  function printUser (req, res) {
-    res.json(
-      `
-        user: ${req.user}
-        password: ${req.password}
-        salt: ${req.salt}
-      `
-    );
+      //concurrent function execution
+      const [
+        resultFirstname, 
+        resultLastname, 
+        resultEmail, 
+        resultTelephone,
+        salt,
+      ] = 
+      await Promise.all([
+        user.editCustomerFirstName(
+          req.body.user.firstname,
+          req.params.customer_id
+        ),
+        user.editCustomerLastName(
+          req.body.user.lastname,
+          req.params.customer_id
+        ),
+        user.editCustomerEmail(
+          req.body.user.email,
+          req.params.customer_id
+        ),
+        user.editCustomerTelephone(
+          req.body.user.telephone,
+          req.params.customer_id
+        ),
+        user.generateSalt(),
+        
+      ]);
+
+      console.log(`salt: ${salt}`)
+      user.editCustomerSalt(salt, req.params.customer_id);
+      //make sure the salt is generated first
+      const password = user.hashPassword(req.body.user.password, salt);
+
+      //make sure the password is generated first 
+
+      user.editCustomerPassword(password, req.params.customer_id);
+
+      if (req.body.user.customer_group_id != "" || !req.body.user.customer_group_id) {
+        user.editCustomerGroup(req.body.user.customer_group_id, req.params.customer_id);
+      }
+      if (req.body.user.fax != "" || !req.body.user.fax) {
+        user.editCustomerFax(req.body.user.fax, req.params.customer_id);
+      }
+      if (req.body.user.newsletter != "" || !req.body.user.newsletter) {
+        user.editCustomerNewsletter(req.body.user.newsletter, req.params.customer_id);
+      }
+      if (req.body.user.status != "" || !req.body.user.status) {
+        user.editCustomerStatus(req.body.user.status, req.params.customer_id);
+      }
+      if (req.body.user.approved != "" || !req.body.user.approved) {
+        user.editCustomerGroup(req.body.user.approved, req.params.customer_id);
+      }
+      if (req.body.user.safe != "" || !req.body.user.safe) {
+        user.editCustomerGroup(req.body.user.safe, req.params.customer_id);
+      }
+
+      next();
+    } catch (err) {
+      next(err);
+    }
   }
 
   function returnDone (req, res) {
