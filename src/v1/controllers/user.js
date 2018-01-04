@@ -269,18 +269,64 @@ function validateEmail (email) {
   });
 }
 
-function hashPassword (password) {
+function generateSalt () {
   return new Promise((resolve, reject) => {
-
+    bcrypt.genSalt(10, (err, salt) => {
+      err ? reject(err) : resolve(salt);
+    });
   });
 }
 
-//last step x
-function insertCustomer (user) {
+function hashPassword (password, salt) {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(password, salt, (err, key) => {
+      err ? reject(err) : resolve(key);
+    });
+  });
+}
+
+function addCustomer (user, password, salt) {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
       //put add insert user here
-      var query = `SELECT email FROM oc_customer WHERE '${email}' LIKE email`;
+      var query = 
+        `
+          INSERT INTO oc_customer 
+            (
+              customer_group_id, 
+              firstname, 
+              lastname,
+              email,
+              telephone,
+              fax,
+              custom_field,
+              newsletter,
+              salt,
+              password,
+              status,
+              approved,
+              safe,
+              date_added 
+            )
+          VALUES 
+            (
+              ${user.customer_group_id},
+              "${user.firstname}",
+              "${user.lastname}",
+              "${user.email}",
+              "${user.telephone}",
+              "${user.fax}",
+              "${user.custom_field}",
+              "${user.newsletter}",
+              "${salt}",
+              "${password}",
+              ${user.status},
+              ${user.approved},
+              ${user.safe},
+              NOW()
+            );
+          SELECT LAST_INSERT_ID() as 'customer_id';
+        `;
       connection.query(query, (err, result) => {
         if (err) {
           console.log(err);
@@ -292,6 +338,99 @@ function insertCustomer (user) {
     });
   });
 }
+
+//insert customer address then return primary key that is not affected
+//by other insert since it is maintained per connection basis
+function addCustomerAddress (address, customerId) {
+  return new Promise((resolve, reject) => {
+    console.log(`controller customerId: ${customerId.customerId}`);
+    getConnection((err, connection) => {
+      var query = 
+        `
+          INSERT INTO oc_address 
+            (
+              customer_id,
+              firstname,
+              lastname,
+              company,
+              address_1,
+              address_2,
+              city,
+              postcode,
+              country_id,
+              zone_id,
+              custom_field
+            )
+          VALUES
+            (
+              ${customerId},
+              "${address.firstname}",
+              "${address.lastname}",
+              "${address.company}",
+              "${address.address_1}",
+              "${address.address_2}",
+              "${address.city}",
+              "${address.postcode}",
+              ${address.country_id},
+              ${address.zone_id},
+              "${address.custom_field}"
+            );
+          SELECT LAST_INSERT_ID() as 'address_id';
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function addCustomerDefaultAddress (addressId, customerId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query = 
+        `
+          UPDATE oc_customer SET address_id = ${addressId} 
+          WHERE customer_id = ${customerId};
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
+function editCustomerGroup (customerGroupId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+
+      var query =
+        `
+          UPDATE oc_customer SET customer_group_id = ${addressId} 
+          WHERE customer_id = ${customerId};
+        `;
+      connection.query(query, (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        connection.release();
+        resolve(result);
+      });
+    });
+  });
+}
+
 
 export default {
   deleteCustomer,
@@ -306,7 +445,12 @@ export default {
   getRecentActivity,
   getUniqueTransactions,
   findEmail,
-  validateEmail
+  validateEmail,
+  generateSalt,
+  hashPassword,
+  addCustomer,
+  addCustomerAddress,
+  addCustomerDefaultAddress
 }
 
 
