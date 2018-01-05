@@ -53,7 +53,210 @@ function getProducts(filter){
   });
 }
 
+/* general edit data */
+function editProuctName (productName, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
 
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctMetaTagTitle (productMetaTagTitle, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctDescription (productDescription, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctMetaTagDescription (productMetaTagDescription, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctTag (productTag, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctMetaTagKeywords (productMetaTagKeywords, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+/* product data edit */
+
+function editProuctCode (productCode, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctSKU (productSKU, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctUPC (productUPC, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctCondition (productCondition, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctLocation (productLocation, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctOurPrice (productOurPrice, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctCondition (productCondition, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctLocation (productLocation, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctPrice (productPrice, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctQuantity (productQuantity, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctSeoUrl(productSeoUrl, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctDateAvailable (productDateAvailable, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctSubtrackStock (productSubtractStock, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+function editProuctStatus (productStatus, productId) {
+  return new Promise((resolve, reject) => {
+    getConnection((err, connection) => {
+      // insert query here
+
+      // resolve or reject logic
+    });
+  });
+}
+
+/* dashboard product queries */
 function getTotalOrders () {
   return new Promise((resolve, reject) => {
     getConnection((err, connection) => {
