@@ -15,6 +15,7 @@ const port = 3000;
 app.use(logger('dev'));
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/v1/admin', api());
 

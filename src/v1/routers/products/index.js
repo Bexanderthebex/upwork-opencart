@@ -54,7 +54,24 @@ export default function () {
     returnProduct
   );
 
+  router.get('/',
+    getProducts,
+    returnProduct
+  );
+
   //create functions here
+  async function getProducts(req, res, next) {
+    try {
+      req.item = await products.getProducts(req.query);
+      if (!req.item) {
+        return next(new errors.NotFound('Products not found'));
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async function getTotalOrders(req, res, next) {
     try {
       req.item = await products.getTotalOrders();
