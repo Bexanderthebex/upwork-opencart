@@ -9,6 +9,7 @@ import express from 'express';
 import user from './routers/user';
 import products from './routers/products';
 import revenue from './routers/revenue';
+import message from './routers/message';
 
 // declare routers here
 export default function () {
@@ -17,6 +18,7 @@ export default function () {
   router.use('/user', user());
   router.use('/products', products());
   router.use('/revenue', revenue());
+  router.use('/message', message())
 
   return router;
 }
